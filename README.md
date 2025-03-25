@@ -126,7 +126,7 @@ MSFD
 ### Part_b: Using CNN
 
 #####  CNN   
-✅ With CNN, we saw a **huge improvement**, achieving **96.3% accuracy**, making it clear that deep learning is far more effective for this task.
+With CNN, we saw a **huge improvement**, achieving **96.3% accuracy**, making it clear that deep learning is far more effective for this task.
 
 #####  Accuracy Trends
 - The model **quickly hit 100% training accuracy**, but validation accuracy leveled off at **~96%**.  
@@ -159,6 +159,10 @@ The following hyperparameters and experimental settings were used in the code:
 | **Code**       | **Hyperparameters Used**                                                                 | **Experiments Done**                                      |
 |-----------------|------------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | **Part B Code** | - Image Size: 64x64<br>- Test Split: 20%<br>- Layers: 2 Conv2D (32, 64 filters), 2 Dense (128, 1)<br>- Optimizer: Adam<br>- Loss: Binary cross-entropy<br>- Epochs: 50<br>- Batch Size: 32<br>- Threshold: 0.5 | - Loaded and preprocessed face mask images<br>- Defined and trained a CNN for binary classification<br>- Visualized accuracy/loss over epochs<br>- Evaluated with classification report |
+
+
+#### Keytakeaways:
+
 
 
 
@@ -209,12 +213,10 @@ The following hyperparameters and experimental settings were used in the code:
 
 
 #### **2. Key Takeaways**
+- Here we applied two techniques and then compared the outputs in them.
 - **Region Growing is more accurate** but requires fine-tuning of tolerance.
 - **Otsu’s method is faster**, but struggles in varying lighting conditions.
-- **Potential Improvements:**
-  - Experimenting with **K-Means clustering** for more adaptive segmentation.
-  - **Hybrid approaches**, such as Otsu + Morphological processing, may enhance results.
-  - Using **deep learning-based segmentation** for further accuracy improvement.
+
 
 
 
@@ -235,7 +237,6 @@ Here we have done four implementations of U-Net models for segmenting face crops
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, 3 decoder levels, mixed precision training.
 - **Training**: 20 epochs, batch size 8, binary cross-entropy loss, `EarlyStopping`, `ModelCheckpoint`.
 - **Metrics**:
-  - Accuracy: 0.6067
   - Dice Score: 0.0126
   - IoU Score: 0.006
 - **Observations**: We could see poor segmentation (near-zero Dice/IoU). We think that the accuracy which we got is likely due to the background dominance.
@@ -248,7 +249,6 @@ Here we have done four implementations of U-Net models for segmenting face crops
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, `BatchNormalization`, `LeakyReLU`.
 - **Training**: 30 epochs, batch size 8, binary cross-entropy, `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 - **Metrics**:
-  - Accuracy: 0.5818
   - Dice Score: 0.8799
   - IoU Score: 0.7856
 - **Observations**: This approch gave the best segmentation, slightly lower accuracy reflects better foreground focus.
@@ -259,7 +259,6 @@ Here we have done four implementations of U-Net models for segmenting face crops
 - **Architecture**: 4 encoder levels (64, 128, 256, 512), 1024-filter bridge, `Conv2DTranspose` with cropping.
 - **Training**: 30 epochs, batch size 8, binary cross-entropy, no callbacks.
 - **Metrics**:
-  - Accuracy: 0.5852
   - Dice Score: 0.8686
   - IoU Score: 0.7677
 - **Observations**: Segmentation achieved was pretty close to approch 2, deeper model adds complexity but lacks training optimization. Slowest inference (12s).
@@ -270,7 +269,6 @@ Here we have done four implementations of U-Net models for segmenting face crops
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, `Conv2DTranspose`, mixed precision.
 - **Training**: 20 epochs, batch size 16, custom `dice_loss`, `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 - **Metrics**:
-  - Accuracy: 0.3612
   - Dice Score: 0.4360
   - IoU Score: 0.2787
 - **Observations**: We observed moderate segmentation, lowest accuracy due to Dice loss focus.
@@ -278,12 +276,13 @@ Here we have done four implementations of U-Net models for segmenting face crops
 ![d4](images/A4.png)
 
 #### Comparative Analysis
-| Code | Accuracy | Dice Score | IoU Score | Inference Time | Key Features |
-|------|----------|------------|-----------|----------------|--------------|
-| 1    | 0.6067   | 0.0126     | 0.006     | 4s             | Baseline, mixed precision |
-| 2    | 0.5818   | 0.8799     | 0.7856    | 9s             | BatchNorm, LeakyReLU, scheduler |
-| 3    | 0.5852   | 0.8686     | 0.7677    | 12s            | Deeper, Conv2DTranspose |
-| 4    | 0.3612   | 0.4360     | 0.2787    | 4s             | Dice loss, mixed precision |
+| Code | Dice Score | IoU Score | Key Features |
+|------|------------|-----------|--------------|
+| 1    | 0.0126     | 0.006     | Baseline, mixed precision |
+| 2    | 0.8799     | 0.7856    | BatchNorm, LeakyReLU, scheduler |
+| 3    | 0.8686     | 0.7677    | Deeper, Conv2DTranspose |
+| 4    | 0.4360     | 0.2787    | Dice loss, mixed precision |
+
 
 - **Best Segmentation**: Approch 2 (Dice 0.8799, IoU 0.7856) excels, balancing architecture and training enhancements.
 - **Fastest**: Approch 1 and 4  leverage mixed precision.
