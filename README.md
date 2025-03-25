@@ -274,7 +274,7 @@ Here we have done four implementations of U-Net models for segmenting face crops
 - **Metrics**:
   - Dice Score: 0.8686
   - IoU Score: 0.7677
-- **Observations**: Segmentation achieved was pretty close to approch 2, deeper model adds complexity but lacks training optimization. Slowest inference (12s).
+- **Observations**: Segmentation achieved was pretty close to approch 2, deeper model adds complexity but lacks training optimization.
 - **Issues**: If we don’t use EarlyStopping, the model might overfit. Without mixed precision it increases computation cost.
 ![d3](images/3.png)
 
