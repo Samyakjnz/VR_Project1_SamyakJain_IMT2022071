@@ -163,7 +163,20 @@ The following hyperparameters and experimental settings were used in the code:
 
 #### Keytakeaways:
 
+- Model Accuracy Over Epochs: The training accuracy quickly reaches 100%, indicating potential overfitting, while validation accuracy stabilizes around 96%, suggesting a well-performing model but possible generalization issues.
+  
 
+<p align="center">
+  <img src="images/b1.png" width="500">
+</p>
+
+
+
+- Model Loss Over Epochs: Training loss decreases to near zero, while validation loss increases, indicating overfitting, where the model memorizes training data but struggles with unseen data.
+  
+<p align="center">
+  <img src="images/b2.png" width="500">
+</p>
 
 
 ### Part_c: Segmentation using traditionals
