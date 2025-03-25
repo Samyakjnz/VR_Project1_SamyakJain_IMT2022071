@@ -119,7 +119,7 @@ MSFD
 ##### Key Takeaways:
 - HOG (Histogram of Oriented Gradients) helps detect objects by focusing on edges and shapes in an image. It works by analyzing how light and dark areas change, making it great for tasks like face and pedestrian detection.
 -LBP (Local Binary Patterns) recognizes textures by comparing how bright or dark a pixel is compared to its neighbors. It turns these comparisons into simple patterns, making it useful for facial recognition and texture analysis
-- **Thus used these 2 methods and were proven to be effectiv**
+- **Thus used these 2 methods and were proven to be effective**
 - For further improvements, switching to a **CNN-based feature extraction approach** might be the next step.
 
 
