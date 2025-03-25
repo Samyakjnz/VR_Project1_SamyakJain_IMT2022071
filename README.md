@@ -172,6 +172,27 @@ The following hyperparameters and experimental settings were used in the code:
 - Dice Score emphasizes similarity and is computed as (2 × Intersection) / (Total Area of Both Sets).
 - IoU (Intersection over Union) is computed as Intersection / Union, making it more sensitive to small overlaps.
 - We have calculated both of them to accurately measures the performance of our methods
+- Before applying the techniques over the entire dataset of thousands of images, we first experimented with some individual images as u can see in the result below
+- The image taken below is from the dataset the code for processing is given below:
+   ```python
+   # Perform segmentation using region growing method
+    segmented_output = segment_region_growing(
+    image_path='../dataset_my/MSFD/1/face_crop/000000_1.jpg',
+    viz=True,
+    tolerance=0.19
+    )
+
+    # Define the corresponding ground truth mask path
+    ground_truth_path = '../dataset_my/MSFD/1/face_crop_segmentation/000000_1.jpg'
+
+    # Compute and display segmentation evaluation metrics
+      evaluation_results = compute_metrics(segmented_output, ground_truth_path)
+      print(evaluation_results)
+
+
+![c1](images/partcseg.png)
+  ![c2](images/image.png)
+
 
 
 ##### **Region Growing Method**
@@ -185,6 +206,8 @@ The following hyperparameters and experimental settings were used in the code:
 - Global thresholding leads to **over-segmentation or under-segmentation** in non-uniform lighting conditions.
 - Computationally efficient but **not adaptive** to local intensity variations.
 
+
+
 #### **2. Key Takeaways**
 - **Region Growing is more accurate** but requires fine-tuning of tolerance.
 - **Otsu’s method is faster**, but struggles in varying lighting conditions.
@@ -193,8 +216,7 @@ The following hyperparameters and experimental settings were used in the code:
   - **Hybrid approaches**, such as Otsu + Morphological processing, may enhance results.
   - Using **deep learning-based segmentation** for further accuracy improvement.
 
-![c1](images/partcseg.png)
-![c2](images/image.png)
+
 
 #### **3. Conclusion**
 Region Growing currently performs better for this dataset, but further tuning and hybrid approaches could yield even better results.
@@ -205,7 +227,7 @@ Region Growing currently performs better for this dataset, but further tuning an
 Here we have done four implementations of U-Net models for segmenting face crops from images in the MSFD dataset. Below we have done performance analysis
 
 #### Dataset
-- **Source**: Images (`.\MSFD\MSFD\1\face_crop`) and masks (`.\MSFD\MSFD\1\face_crop_segmentation`).
+- **Source**: Images (`.\MSFD\MSFD\1\face_crop`) and masks (`.\MSFD\MSFD\1\face_crop_segmentation`). (Adjust the path according to ur directories)
 - **Preprocessing**: Resized to 128x128, normalized to [0, 1], split into 80% training and 20% validation.
 
 
