@@ -104,20 +104,22 @@ MSFD
 
 ##### Support Vector Machine (SVM)
 - The SVM model performed **fairly well**, achieving an accuracy of **88.05%**.
-- It maintained a good balance between **precision and recall**, meaning it didn’t favor one class over the other.
+- It correctly identified both positive and negative cases without being biased toward one. This means it didn’t miss too many positives (high recall) or falsely label negatives as positives (high precision).
 - The **f1-score of 0.88** suggests that the model makes reliable predictions but still has some room for improvement.
-- A few misclassifications could be due to **lighting variations, occlusions, or feature extraction limitations**.
+- A few misclassifications could be due to **lighting variations, obstructions, or feature extraction limitations**.
 - Overall, SVM does a solid job, but it might not be the best option for complex patterns.
 
 ##### Multi-Layer Perceptron (MLP)
 - The MLP model performed **better than SVM**, with an accuracy of **92.56%**.
 - Its **f1-score of 0.93** shows that it captures patterns more effectively.
-- Compared to SVM, MLP had **fewer false negatives**, meaning it was better at correctly identifying both masked and unmasked faces.
+- Compared to SVM, MLP made fewer mistakes by missing masked or unmasked faces, meaning it identified them more accurately.
 - The improvement is likely because MLP, being a neural network, can learn more **complex relationships** in the data.
 - With some fine-tuning (like adjusting hidden layers or activation functions), it could perform even better.
 
 ##### Key Takeaways:
-- **Handcrafted features (HOG + LBP) were effective**
+- HOG (Histogram of Oriented Gradients) helps detect objects by focusing on edges and shapes in an image. It works by analyzing how light and dark areas change, making it great for tasks like face and pedestrian detection.
+-LBP (Local Binary Patterns) recognizes textures by comparing how bright or dark a pixel is compared to its neighbors. It turns these comparisons into simple patterns, making it useful for facial recognition and texture analysis
+- **Thus used these 2 methods and were proven to be effectiv**
 - For further improvements, switching to a **CNN-based feature extraction approach** might be the next step.
 
 
@@ -167,6 +169,11 @@ The following hyperparameters and experimental settings were used in the code:
 | **Region Growing**    | 0.3997   | 0.5365     |
 | **Otsu’s Thresholding** | 0.3156   | 0.4430     |
 
+- Dice Score emphasizes similarity and is computed as (2 × Intersection) / (Total Area of Both Sets).
+- IoU (Intersection over Union) is computed as Intersection / Union, making it more sensitive to small overlaps.
+- We have calculated both of them to accurately measures the performance of our methods
+
+
 ##### **Region Growing Method**
 - Achieved **higher accuracy**, with an IoU of **0.3997** and a Dice score of **0.5365**.
 - Adaptive to local intensity variations but **sensitive to tolerance selection**.
@@ -195,56 +202,56 @@ Region Growing currently performs better for this dataset, but further tuning an
 
 ### Part_d: Using UNet method to get better output.
 
-This project explores four implementations of U-Net models for segmenting face crops from images in the MSFD dataset. Each code builds on the previous, introducing architectural changes, training strategies, and loss functions. Below is an analysis of their performance, strengths, and weaknesses.
+Here we have done four implementations of U-Net models for segmenting face crops from images in the MSFD dataset. Below we have done performance analysis
 
 #### Dataset
 - **Source**: Images (`.\MSFD\MSFD\1\face_crop`) and masks (`.\MSFD\MSFD\1\face_crop_segmentation`).
 - **Preprocessing**: Resized to 128x128, normalized to [0, 1], split into 80% training and 20% validation.
 
-#### Model Implementations
 
-#### Code 1: Baseline U-Net
+#### Approch 1: Baseline U-Net
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, 3 decoder levels, mixed precision training.
 - **Training**: 20 epochs, batch size 8, binary cross-entropy loss, `EarlyStopping`, `ModelCheckpoint`.
 - **Metrics**:
   - Accuracy: 0.6067
   - Dice Score: 0.0126
   - IoU Score: 0.006
-- **Observations**: Poor segmentation (near-zero Dice/IoU), moderate accuracy likely due to background dominance. Fast inference (4s) thanks to mixed precision.
-- **Issues**: Insufficient training or data mismatch likely caused failure to segment faces.
+- **Observations**: We could see poor segmentation (near-zero Dice/IoU). We think that the accuracy which we got is likely due to the background dominance.
+- **Issues**: Insufficient training or data mismatch likely caused failure to segment faces. We even saw that the code was auto killed due to stagnant growth curve
+- 
 
 ![d1](images/Approch1.png)
 
-#### Code 2: Enhanced U-Net with BatchNormalization and LeakyReLU
+#### Approch 2: Enhanced U-Net with BatchNormalization and LeakyReLU
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, `BatchNormalization`, `LeakyReLU`.
 - **Training**: 30 epochs, batch size 8, binary cross-entropy, `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 - **Metrics**:
   - Accuracy: 0.5818
   - Dice Score: 0.8799
   - IoU Score: 0.7856
-- **Observations**: Excellent segmentation (high Dice/IoU), slightly lower accuracy reflects better foreground focus. Slower inference (9s) without mixed precision.
+- **Observations**: This approch gave the best segmentation, slightly lower accuracy reflects better foreground focus.
 - **Strengths**: `BatchNormalization` and adaptive learning rate improved performance significantly.
 ![d2](images/A2.png)
 
-#### Code 3: Deeper U-Net with Conv2DTranspose
+#### Approch 3: Deeper U-Net with Conv2DTranspose
 - **Architecture**: 4 encoder levels (64, 128, 256, 512), 1024-filter bridge, `Conv2DTranspose` with cropping.
 - **Training**: 30 epochs, batch size 8, binary cross-entropy, no callbacks.
 - **Metrics**:
   - Accuracy: 0.5852
   - Dice Score: 0.8686
   - IoU Score: 0.7677
-- **Observations**: Strong segmentation (close to Code 2), deeper model adds complexity but lacks training optimization. Slowest inference (12s).
-- **Issues**: No `EarlyStopping` risks overfitting; no mixed precision increases compute cost.
+- **Observations**: Segmentation achieved was pretty close to approch 2, deeper model adds complexity but lacks training optimization. Slowest inference (12s).
+- **Issues**: If we don’t use EarlyStopping, the model might overfit. Without mixed precision it increases computation cost.
 ![d3](images/3.png)
 
-#### Code 4: U-Net with Dice Loss
+#### Approch 4: U-Net with Dice Loss
 - **Architecture**: 3 encoder levels (64, 128, 256), 512-filter bridge, `Conv2DTranspose`, mixed precision.
 - **Training**: 20 epochs, batch size 16, custom `dice_loss`, `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 - **Metrics**:
   - Accuracy: 0.3612
   - Dice Score: 0.4360
   - IoU Score: 0.2787
-- **Observations**: Moderate segmentation, lowest accuracy due to Dice loss focus. Fast inference (4s) with mixed precision.
+- **Observations**: We observed moderate segmentation, lowest accuracy due to Dice loss focus.
 - **Issues**: Dice loss didn’t yield high Dice/IoU, possibly due to short training or large batch size.
 ![d4](images/A4.png)
 
@@ -256,20 +263,13 @@ This project explores four implementations of U-Net models for segmenting face c
 | 3    | 0.5852   | 0.8686     | 0.7677    | 12s            | Deeper, Conv2DTranspose |
 | 4    | 0.3612   | 0.4360     | 0.2787    | 4s             | Dice loss, mixed precision |
 
-- **Best Segmentation**: Code 2 (Dice 0.8799, IoU 0.7856) excels, balancing architecture and training enhancements.
-- **Fastest**: Codes 1 and 4 (4s) leverage mixed precision.
-- **Worst Performer**: Code 1 fails at segmentation; Code 4 underperforms despite Dice loss.
+- **Best Segmentation**: Approch 2 (Dice 0.8799, IoU 0.7856) excels, balancing architecture and training enhancements.
+- **Fastest**: Approch 1 and 4  leverage mixed precision.
+- **Worst Performer**: Approch 1 fails at segmentation; Approch 4 underperforms despite Dice loss.
 
-#### Recommendations
-1. **Data Validation**: Inspect image-mask pairs (especially for Code 1’s failure).
-2. **Training Duration**: Extend epochs for Codes 1 and 4 (e.g., to 30).
-3. **Loss Function**: Combine Dice and cross-entropy (e.g., for Code 4) to balance accuracy and segmentation.
-4. **Efficiency**: Add mixed precision to Codes 2 and 3 for faster inference.
-5. **Visualization**: Plot predicted vs. true masks to diagnose issues.
 
 #### Conclusion
-Codes 2 and 3 achieve robust face segmentation, with Code 2 slightly ahead due to training optimizations. Code 1 serves as a cautionary baseline, while Code 4’s Dice loss experiment suggests further tuning is needed. Future work could blend Code 2’s enhancements with Code 4’s loss approach for optimal results.  
-
+We observed approaches 2 and 3 do a good job at segmenting faces, but Approach 2 is a bit better because of improved training. Approach 1 shows what happens without these improvements, and Approach 4’s Dice loss experiment needs more fine-tuning.
 
 
 
